@@ -3,6 +3,7 @@ import Link from 'next/link';
 import {useState} from 'react';
 import { Swiper, SwiperSlide, useSwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
+import styles from '../styles/Styles.module.css';
 import 'swiper/css';
 import "swiper/css/navigation";
 
@@ -32,8 +33,8 @@ export default function Home() {
 
   const getPlaylistItems = async (playlist_id) => {
     const res = await fetch(`/api/playlist?pid=${playlist_id}`);
-    const {items} = await res.json();
-    return items;
+    const {allItems} = await res.json();
+    return allItems;
   };
 
   const getArtists = async (artists_ids) => {
@@ -66,7 +67,7 @@ export default function Home() {
 
     let genresOnPlaylist = [];
     for (let i=0; i < artists.length; i++) {
-      if (artists[i].genres) {
+      if (artists[i]) {
         let genres = artists[i].genres;
         for (let j=0; j < genres.length; j++) {
           genresOnPlaylist[`"${genres[j]}"`] = (genresOnPlaylist[`"${genres[j]}"`] || 0) + 1 + artistsOnPlaylist[artists[i].id].occurences;
@@ -92,9 +93,15 @@ export default function Home() {
   if (session) {
     return (
       <>
-        Signed in as {session?.token?.email} <br />
-        <button onClick={() => signOut()}>Sign out</button>
+        <div class={styles.dropdown}>
+          <img src={session?.token?.picture} className={styles.profile_image}/>
+          <div class={styles.dropdown_content}>
+            <a onClick={() => signOut()}>Sign out</a>
+          </div>
+        </div>
+
         <hr />
+
         <button onClick={() => getPlaylists()}>Get all my playlists</button>
         <Swiper
           spaceBetween={50}
@@ -102,7 +109,6 @@ export default function Home() {
           loop={true}
           navigation={true}
           modules={[Navigation]}
-          onSlideChange={() => console.log('slide change')}
           onSwiper={(swiper) => console.log(swiper)}
         >
           {playlists.map((item) => (
@@ -114,19 +120,21 @@ export default function Home() {
             </SwiperSlide>
           ))}
         </Swiper>
-        {topArtists.map((item) => (
-        <div key={item.id}>
-          <p>{item.name}</p>
-          <hr />
+        <div className={styles.top_artists}>
+          {topArtists.map((item) => (
+          <div key={item.id}>
+            <p>{item.name}</p>
+          </div>
+        ))}
         </div>
-      ))}
-      <hr />
-      {topGenres.map((item) => (
-        <div key={item}>
-          <p>{item.slice(1,item.length-1)}</p>
-          <hr />
+        
+        <div className={styles.top_genres}>
+          {topGenres.map((item) => (
+            <div key={item}>
+              <p>{item.slice(1,item.length-1)}</p>
+            </div>
+          ))}
         </div>
-      ))}
       </>
     );
   }
