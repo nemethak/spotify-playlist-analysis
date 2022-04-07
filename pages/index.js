@@ -12,6 +12,7 @@ export default function Home() {
   const [playlists, setPlayists] = useState([]);
   const [topArtists, setTopArtists] = useState([]);
   const [topGenres, setTopGenres] = useState([]);
+  const [selectedPlaylist, setSelectedPlaylist] = useState("")
 
   function splitArray(array, chunk_size){
     let index = 0;
@@ -43,7 +44,21 @@ export default function Home() {
     return items;
   };
 
+  const savePlaylistStats = async () => {
+    try {
+      const body = { selectedPlaylist, playlists, topGenres };
+      await fetch('api/statistics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const getPlaylistStatistics = async (playlist_id) => {
+    setSelectedPlaylist(playlist_id);
     const playlistItems = await getPlaylistItems(playlist_id);
     let artistsOnPlaylist = {};
     for (let i=0; i < playlistItems.length; i++) {
@@ -76,6 +91,12 @@ export default function Home() {
     }
     let sortedGenres = Object.keys(genresOnPlaylist).sort((a,b) => (genresOnPlaylist[b] - genresOnPlaylist[a]));
     sortedGenres.length = Math.min(sortedGenres.length, 5);
+    for (let i=0; i < sortedGenres.length; i++) {
+      sortedGenres[i] = {
+                          id: sortedGenres[i],
+                          occurences: genresOnPlaylist[sortedGenres[i]]
+                        }
+    }
     setTopGenres(sortedGenres);
 
     let sortedArtists = Object.keys(artistsOnPlaylist).sort((a,b) => (artistsOnPlaylist[b].occurences - artistsOnPlaylist[a].occurences));
@@ -120,20 +141,23 @@ export default function Home() {
             </SwiperSlide>
           ))}
         </Swiper>
+
+        <button onClick={() => savePlaylistStats()}>Save playlist statistics</button>
+
+        <div className={styles.top_genres}>
+          {topGenres.map((item) => (
+            <div key={item.id} className={styles.genre}>
+              <p>{item.id.slice(1,item.id.length-1)}</p>
+            </div>
+          ))}
+        </div>
+
         <div className={styles.top_artists}>
           {topArtists.map((item) => (
-          <div key={item.id}>
+          <div key={item.id} className={styles.artist}>
             <p>{item.name}</p>
           </div>
         ))}
-        </div>
-        
-        <div className={styles.top_genres}>
-          {topGenres.map((item) => (
-            <div key={item}>
-              <p>{item.slice(1,item.length-1)}</p>
-            </div>
-          ))}
         </div>
       </>
     );

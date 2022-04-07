@@ -37,18 +37,40 @@
 
 .top_artists {
   background-color: antiquewhite;
+  padding: 1rem 3rem;
 }
 
-.top_artists div {
-  padding: 5px;
+.artist {
+  background-color: rgb(158, 147, 133);
+  opacity: 0.9;
+  color: white;
+  padding: 0.8rem;
+  margin: 1rem;
+  border-radius: 10px;
+}
+
+.artist p {
+  padding: 0rem 1rem;
+  font-weight: bold;
 }
 
 .top_genres {
   background-color: darkseagreen;
+  padding: 1rem 3rem;
 }
 
-.top_genres div {
-  padding: 5px;
+.genre {
+  background-color: rgb(98, 138, 115);
+  opacity: 0.9;
+  color: white;
+  padding: 0.8rem;
+  margin: 1rem;
+  border-radius: 10px;
+}
+
+.genre p {
+  padding: 0rem 1rem;
+  font-weight: bold;
 }
 
 .swiper-button-next { color: red; }
