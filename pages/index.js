@@ -46,7 +46,7 @@ export default function Home() {
 
   const savePlaylistStats = async () => {
     try {
-      const body = { selectedPlaylist, playlists, topGenres };
+      const body = { selectedPlaylist, playlists, topGenres, topArtists };
       await fetch('api/statistics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

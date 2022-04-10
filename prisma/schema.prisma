@@ -13,7 +13,14 @@ datasource db {
 model Genre {
   id            String       @id
   playlists     Playlist[]
-  occurences    Occurence[]
+  occurences    GenreOccurence[]
+}
+
+model Artist {
+  id            String       @id
+  name          String
+  playlists     Playlist[]
+  occurences    ArtistOccurence[]
 }
 
 model Playlist {
@@ -23,14 +30,25 @@ model Playlist {
   numOfTracks   Int       @default(0)
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   genres        Genre[]
-  occurences    Occurence[]
+  artists       Artist[]
+  genreOccurences GenreOccurence[]
+  artistOccurences ArtistOccurence[]
   @@map(name: "playlists")
 }
 
-model Occurence {
+model GenreOccurence {
   id            String   @default(cuid()) @id
   genre         Genre?   @relation(fields: [genreId], references: [id])
   genreId       String?
+  occurences    Int
+  playlist      Playlist?   @relation(fields: [playlistId], references: [id])
+  playlistId    String?
+}
+
+model ArtistOccurence {
+  id            String   @default(cuid()) @id
+  artist        Artist?   @relation(fields: [artistId], references: [id])
+  artistId      String?
   occurences    Int
   playlist      Playlist?   @relation(fields: [playlistId], references: [id])
   playlistId    String?
