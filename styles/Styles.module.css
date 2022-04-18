@@ -1,3 +1,8 @@
+.header {
+  background-color: #afd4c7;
+  padding: 50px;
+}
+
 .profile_image {
   width: 80px;
   height: 80px;
@@ -6,17 +11,20 @@
 }
 
 .dropdown {
-  position: relative;
-  display: inline-block;
+  position: absolute;
+  display: block;
+  right: 10px;
+  top: 10px;
 }
 
 .dropdown_content {
   display: none;
   position: absolute;
   background-color: #f9f9f9;
+  right: 0;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+  z-index: 2;
 }
 
 .dropdown_content a {
@@ -73,7 +81,16 @@
   font-weight: bold;
 }
 
-.swiper-button-next { color: red; }
+.my_progress {
+  width: 95%;
+  background-color: #ddd;
+}
+
+.my_bar {
+  width: 0%;
+  height: 30px;
+  background-color: #04AA6D;
+}
 
 .container {
   padding: 0 2rem;

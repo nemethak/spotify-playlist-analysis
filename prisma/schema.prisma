@@ -10,6 +10,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String              @id @default(cuid())
+  name         String?
+  email        String           @unique
+  playlists     Playlist[]
+}
+
 model Genre {
   id            String       @id
   playlists     Playlist[]
@@ -28,28 +35,34 @@ model Playlist {
   playlistId    String
   name          String?
   numOfTracks   Int       @default(0)
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  acousticness  Float?
+  danceability  Float?
+  energy        Float?
+  valence       Float?
+  createdAt     String  @map(name: "created_at")
   genres        Genre[]
   artists       Artist[]
   genreOccurences GenreOccurence[]
   artistOccurences ArtistOccurence[]
+  user         User       @relation(fields: [userId], references: [id])
+  userId       String
   @@map(name: "playlists")
 }
 
 model GenreOccurence {
   id            String   @default(cuid()) @id
-  genre         Genre?   @relation(fields: [genreId], references: [id])
-  genreId       String?
+  genre         Genre   @relation(fields: [genreId], references: [id])
+  genreId       String
   occurences    Int
-  playlist      Playlist?   @relation(fields: [playlistId], references: [id])
-  playlistId    String?
+  playlist      Playlist   @relation(fields: [playlistId], references: [id])
+  playlistId    String
 }
 
 model ArtistOccurence {
   id            String   @default(cuid()) @id
-  artist        Artist?   @relation(fields: [artistId], references: [id])
-  artistId      String?
+  artist        Artist   @relation(fields: [artistId], references: [id])
+  artistId      String
   occurences    Int
-  playlist      Playlist?   @relation(fields: [playlistId], references: [id])
-  playlistId    String?
+  playlist      Playlist   @relation(fields: [playlistId], references: [id])
+  playlistId    String
 }

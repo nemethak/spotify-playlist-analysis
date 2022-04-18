@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import SpotifyProvider from 'next-auth/providers/spotify';
+import prisma from "../../../lib/prisma"
 
 export default NextAuth({
   providers: [
@@ -19,7 +20,17 @@ export default NextAuth({
       return token;
     },
     async session(session, user) {
-      session.user = user;
+      const upsertUser = await prisma.user.upsert({
+        where: {
+          email: session?.token.email,
+        },
+        update: {},
+        create: {
+          email: session?.token.email,
+          name: session?.token.name,
+        },
+      })
+      session.user = upsertUser;
       return session;
     },
   },

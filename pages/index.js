@@ -1,6 +1,6 @@
 import {useSession, signIn, signOut} from 'next-auth/react';
 import Link from 'next/link';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { Swiper, SwiperSlide, useSwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 import styles from '../styles/Styles.module.css';
@@ -12,9 +12,11 @@ export default function Home() {
   const [playlists, setPlayists] = useState([]);
   const [topArtists, setTopArtists] = useState([]);
   const [topGenres, setTopGenres] = useState([]);
-  const [selectedPlaylist, setSelectedPlaylist] = useState("")
+  const [audioFeatures, setAudioFeatures] = useState({});
+  const [selectedPlaylist, setSelectedPlaylist] = useState("");
+  useEffect(() => { setBars(); }, [audioFeatures]);
 
-  function splitArray(array, chunk_size){
+  function splitArray(array, chunk_size) {
     let index = 0;
     let arrayLength = array.length;
     let tempArray = [];
@@ -24,7 +26,32 @@ export default function Home() {
         tempArray.push(chunk);
     }
     return tempArray;
-}
+  }
+
+  function setBar(bar, value) {
+    let i = 0;
+    if (i == 0) {
+      i = 1;
+      let elem = document.getElementById(bar);
+      let width = 1;
+      let id = setInterval(frame, 10);
+      function frame() {
+        if (width >= value) {
+          clearInterval(id);
+          i = 0;
+        } else {
+          width++;
+          elem.style.width = width + "%";
+        }
+      }
+    }
+  }
+
+  function setBars() {
+    Object.keys(audioFeatures).forEach((key) => {
+      setBar(`${key}Bar`,audioFeatures[key]*100)
+    });
+  }
 
   const getPlaylists = async () => {
     const res = await fetch('/api/playlists');
@@ -38,15 +65,21 @@ export default function Home() {
     return allItems;
   };
 
-  const getArtists = async (artists_ids) => {
-    const res = await fetch(`/api/artists?ids=${artists_ids}`);
+  const getArtists = async (artist_ids) => {
+    const res = await fetch(`/api/artists?ids=${artist_ids}`);
     const {items} = await res.json();
     return items;
   };
 
+  const getAudioFeatures = async (track_ids) => {
+    const res = await fetch(`/api/audiofeatures?ids=${track_ids}`);
+    const {audio_features} = await res.json();
+    return audio_features;
+  };
+
   const savePlaylistStats = async () => {
     try {
-      const body = { selectedPlaylist, playlists, topGenres, topArtists };
+      const body = { selectedPlaylist, playlists, topGenres, topArtists, audioFeatures };
       await fetch('api/statistics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -61,8 +94,10 @@ export default function Home() {
     setSelectedPlaylist(playlist_id);
     const playlistItems = await getPlaylistItems(playlist_id);
     let artistsOnPlaylist = {};
+    let tracksOnPlaylist = [];
     for (let i=0; i < playlistItems.length; i++) {
       if (playlistItems[i].track) {
+        tracksOnPlaylist.push(playlistItems[i].track.id);
         let artists = playlistItems[i].track.artists;
         for (let j=0; j < artists.length; j++) {
           artistsOnPlaylist[artists[j].id] = {name: artists[j].name, occurences: (artistsOnPlaylist[artists[j].id]?.occurences || 0) + 1};
@@ -70,6 +105,26 @@ export default function Home() {
       }
     }
 
+    let allTrackIds = splitArray(tracksOnPlaylist, 100);
+    const audioFeatures = {
+      "acousticness": 0,
+      "danceability": 0,
+      "energy": 0,
+      "valence": 0,
+    };
+    for (const trackIds of allTrackIds) {
+      let trackIdsQuery = trackIds.join();
+      const tempAudioFeatures = await getAudioFeatures(trackIdsQuery);
+      //TODO: what if there are null values among the audio features
+      Object.keys(tempAudioFeatures).forEach((key) => {
+        audioFeatures[key] += tempAudioFeatures[key];
+      });
+    }
+    Object.keys(audioFeatures).forEach((key) => {
+      audioFeatures[key] /= tracksOnPlaylist.length;
+    });
+    setAudioFeatures(audioFeatures);
+    
     let allArtistsIds = splitArray(Object.keys(artistsOnPlaylist), 50);
     const artists = [];
     for (const artistsIds of allArtistsIds) {
@@ -114,14 +169,17 @@ export default function Home() {
   if (session) {
     return (
       <>
-        <div class={styles.dropdown}>
-          <img src={session?.token?.picture} className={styles.profile_image}/>
-          <div class={styles.dropdown_content}>
-            <a onClick={() => signOut()}>Sign out</a>
+        <div className={styles.header}>
+          <div className={styles.dropdown}>
+            <img src={session?.token?.picture} className={styles.profile_image}/>
+            <div className={styles.dropdown_content}>
+              <Link href={`history/${session?.user?.id}`}>
+                <a>History</a>
+              </Link>
+              <a onClick={() => signOut()}>Sign out</a>
+            </div>
           </div>
         </div>
-
-        <hr />
 
         <button onClick={() => getPlaylists()}>Get all my playlists</button>
         <Swiper
@@ -143,6 +201,27 @@ export default function Home() {
         </Swiper>
 
         <button onClick={() => savePlaylistStats()}>Save playlist statistics</button>
+
+        <p>Acousticness</p>
+        <div className={styles.my_progress}>
+          <div id="acousticnessBar" className={styles.my_bar}></div>
+        </div>
+
+        <p>Danceability</p>
+        <div className={styles.my_progress}>
+          <div id="danceabilityBar" className={styles.my_bar}></div>
+        </div>
+
+        <p>Energy</p>
+        <div className={styles.my_progress}>
+          <div id="energyBar" className={styles.my_bar}></div>
+        </div>
+
+        <p>Valence</p>
+        <div className={styles.my_progress}>
+          <div id="valenceBar" className={styles.my_bar}></div>
+        </div>
+
 
         <div className={styles.top_genres}>
           {topGenres.map((item) => (
