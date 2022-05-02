@@ -98,7 +98,7 @@ export default function History( { playlists } ) {
         
         <div className={styles.top_artists}>
           {playlists.map((item) => (
-            <details>
+            <details key={item.id}>
               <summary>{item.name}</summary>
               <ul>
                 {item.instances.map((instance) => (
