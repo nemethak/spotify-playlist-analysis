@@ -3,9 +3,20 @@ import Link from 'next/link';
 import {useState, useEffect} from 'react';
 import { Swiper, SwiperSlide, useSwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
+import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import styles from '../styles/Styles.module.css';
 import 'swiper/css';
 import "swiper/css/navigation";
+
+const LoadingIndicator = props => {
+  const { promiseInProgress } = usePromiseTracker();
+  return (
+    promiseInProgress && 
+    <div>
+      Loading....
+    </div>
+  );  
+}
 
 export default function Home() {
   const {data: session} = useSession();
@@ -16,12 +27,6 @@ export default function Home() {
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
   const [showMe, setShowMe] = useState(false);
   useEffect(() => { setBars(); }, [audioFeatures]);
-
-  function showIfNeeded() {
-    if (!showMe) {
-      setShowMe(!showMe);
-    }
-  }
 
   function splitArray(array, chunk_size) {
     let index = 0;
@@ -161,7 +166,6 @@ export default function Home() {
       audioFeatures[key] /= tracksOnPlaylist.length;
     });
     console.log(millisToTime(audioFeatures.duration));
-    setAudioFeatures(audioFeatures);
     
     let allArtistsIds = splitArray(Object.keys(artistsOnPlaylist), 50);
     const artists = [];
@@ -202,7 +206,8 @@ export default function Home() {
                         }
     }
     setTopArtists(sortedArtists);
-    showIfNeeded();
+    setShowMe(true);
+    setAudioFeatures(audioFeatures);
   }
 
   if (session) {
@@ -220,7 +225,7 @@ export default function Home() {
           </div>
         </div>
 
-        <button onClick={() => getPlaylists()}>Get all my playlists</button>
+        <button onClick={() => trackPromise(getPlaylists())}>Get all my playlists</button>
         <Swiper
           spaceBetween={50}
           slidesPerView={3}
@@ -233,16 +238,17 @@ export default function Home() {
             <SwiperSlide key={item.id}>
               <div>
                 <p>{item.name}</p>
-                <img src={item.images[0]?.url} onClick={() => getPlaylistStatistics(item.id)} width="300" height="300"/>
+                <img src={item.images[0]?.url} onClick={() => {setShowMe(false); trackPromise(getPlaylistStatistics(item.id))}} width="300" height="300"/>
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
+                
+        <LoadingIndicator/>
 
         <div style={{display: showMe?"block":"none"}}>
-
           <button onClick={() => savePlaylistStats()}>Save playlist statistics</button>
-       
+
           <p>Acousticness</p>
           <div className={styles.my_progress}>
             <div id="acousticnessBar" className={styles.my_bar}></div>
