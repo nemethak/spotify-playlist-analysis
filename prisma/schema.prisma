@@ -39,6 +39,7 @@ model Playlist {
   danceability  Float?
   energy        Float?
   valence       Float?
+  duration      Int?
   createdAt     String  @map(name: "created_at")
   genres        Genre[]
   artists       Artist[]

@@ -14,7 +14,14 @@ export default function Home() {
   const [topGenres, setTopGenres] = useState([]);
   const [audioFeatures, setAudioFeatures] = useState({});
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
+  const [showMe, setShowMe] = useState(false);
   useEffect(() => { setBars(); }, [audioFeatures]);
+
+  function showIfNeeded() {
+    if (!showMe) {
+      setShowMe(!showMe);
+    }
+  }
 
   function splitArray(array, chunk_size) {
     let index = 0;
@@ -27,6 +34,32 @@ export default function Home() {
     }
     return tempArray;
   }
+
+  function millisToTime(millis) {
+    if (millis > 3600000) {
+      let hours = Math.floor(millis / 3600000);
+      let remainingMillis = millis % 3600000;
+      let minutes = Math.floor(remainingMillis / 60000);
+      let seconds = ((remainingMillis % 60000) / 1000).toFixed(0);
+      if (minutes == 60) {
+        hours++;
+        minutes = 0;
+      }
+      return (
+        seconds == 60 ?
+        hours + ":" + (minutes < 10 ? "0" : "") + (minutes+1) + ":00" :
+        hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+    );
+    }
+    let minutes = Math.floor(millis / 60000);
+    let seconds = ((millis % 60000) / 1000).toFixed(0);
+    return (
+      seconds == 60 ?
+      (minutes+1) + ":00" :
+      minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+    );
+  }
+  
 
   function setBar(bar, value) {
     let i = 0;
@@ -48,7 +81,8 @@ export default function Home() {
   }
 
   function setBars() {
-    Object.keys(audioFeatures).forEach((key) => {
+    const {duration, ...rest} = audioFeatures;
+    Object.keys(rest).forEach((key) => {
       setBar(`${key}Bar`,audioFeatures[key]*100)
     });
   }
@@ -111,6 +145,7 @@ export default function Home() {
       "danceability": 0,
       "energy": 0,
       "valence": 0,
+      "duration": 0,
     };
     for (const trackIds of allTrackIds) {
       let trackIdsQuery = trackIds.join();
@@ -120,9 +155,12 @@ export default function Home() {
         audioFeatures[key] += tempAudioFeatures[key];
       });
     }
-    Object.keys(audioFeatures).forEach((key) => {
+    console.log(audioFeatures);
+    const {duration, ...rest} = audioFeatures;
+    Object.keys(rest).forEach((key) => {
       audioFeatures[key] /= tracksOnPlaylist.length;
     });
+    console.log(millisToTime(audioFeatures.duration));
     setAudioFeatures(audioFeatures);
     
     let allArtistsIds = splitArray(Object.keys(artistsOnPlaylist), 50);
@@ -164,6 +202,7 @@ export default function Home() {
                         }
     }
     setTopArtists(sortedArtists);
+    showIfNeeded();
   }
 
   if (session) {
@@ -200,43 +239,45 @@ export default function Home() {
           ))}
         </Swiper>
 
-        <button onClick={() => savePlaylistStats()}>Save playlist statistics</button>
+        <div style={{display: showMe?"block":"none"}}>
 
-        <p>Acousticness</p>
-        <div className={styles.my_progress}>
-          <div id="acousticnessBar" className={styles.my_bar}></div>
-        </div>
+          <button onClick={() => savePlaylistStats()}>Save playlist statistics</button>
+       
+          <p>Acousticness</p>
+          <div className={styles.my_progress}>
+            <div id="acousticnessBar" className={styles.my_bar}></div>
+          </div>
 
-        <p>Danceability</p>
-        <div className={styles.my_progress}>
-          <div id="danceabilityBar" className={styles.my_bar}></div>
-        </div>
+          <p>Danceability</p>
+          <div className={styles.my_progress}>
+            <div id="danceabilityBar" className={styles.my_bar}></div>
+          </div>
 
-        <p>Energy</p>
-        <div className={styles.my_progress}>
-          <div id="energyBar" className={styles.my_bar}></div>
-        </div>
+          <p>Energy</p>
+          <div className={styles.my_progress}>
+            <div id="energyBar" className={styles.my_bar}></div>
+          </div>
 
-        <p>Valence</p>
-        <div className={styles.my_progress}>
-          <div id="valenceBar" className={styles.my_bar}></div>
-        </div>
+          <p>Valence</p>
+          <div className={styles.my_progress}>
+            <div id="valenceBar" className={styles.my_bar}></div>
+          </div>
 
+          <div className={styles.top_genres}>
+            {topGenres.map((item) => (
+              <div key={item.id} className={styles.genre}>
+                <p>{item.id.slice(1,item.id.length-1)}</p>
+              </div>
+            ))}
+          </div>
 
-        <div className={styles.top_genres}>
-          {topGenres.map((item) => (
-            <div key={item.id} className={styles.genre}>
-              <p>{item.id.slice(1,item.id.length-1)}</p>
+          <div className={styles.top_artists}>
+            {topArtists.map((item) => (
+            <div key={item.id} className={styles.artist}>
+              <p>{item.name}</p>
             </div>
           ))}
-        </div>
-
-        <div className={styles.top_artists}>
-          {topArtists.map((item) => (
-          <div key={item.id} className={styles.artist}>
-            <p>{item.name}</p>
           </div>
-        ))}
         </div>
       </>
     );

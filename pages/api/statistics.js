@@ -20,6 +20,7 @@ export default async function handle(req, res) {
         danceability: audioFeatures.danceability,
         energy: audioFeatures.energy,
         valence: audioFeatures.valence,
+        duration: audioFeatures.duration,
         createdAt: new Date().toLocaleString(),
         userId: user,
       },
