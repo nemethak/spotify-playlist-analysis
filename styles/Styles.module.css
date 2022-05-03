@@ -81,6 +81,10 @@
   font-weight: bold;
 }
 
+.bars div p {
+  display: inline-block;
+}
+
 .my_progress {
   width: 95%;
   background-color: #ddd;
@@ -207,4 +211,56 @@
     width: 100%;
     flex-direction: column;
   }
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline;
+  background-color: rgb(173, 177, 182);
+  padding: 0.05rem 0.3rem;
+  border-radius: 1rem;
+  margin-left: 0.2rem;
+  color: white;
+  font-size: small;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 400px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 3px;
+  border-radius: 6px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -40px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 10%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }
