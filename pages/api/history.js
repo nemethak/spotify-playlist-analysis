@@ -15,6 +15,7 @@ const handler = async (req, res) => {
           playlistId: sid,
         },
     })
+    topGenres.map(genre => {genre.id = genre.genreId; delete genre.genreId;});
     allItems["topGenres"] = topGenres;
     const topArtists = await prisma.artistOccurence.findMany({
         where: {

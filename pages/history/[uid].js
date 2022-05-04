@@ -1,12 +1,14 @@
 import {useSession, signIn, signOut} from 'next-auth/react';
 import Link from 'next/link';
 import {useState} from 'react';
-import { Swiper, SwiperSlide, useSwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper';
 import styles from '../../styles/Styles.module.css';
 import 'swiper/css';
 import "swiper/css/navigation";
 import prisma from "../../lib/prisma";
+import { trackPromise } from "react-promise-tracker";
+import { LoadingIndicator } from '../../lib/loadingindicator';
+import { setBars } from '../../lib/utils';
+import { StatisticsComponent } from '../../lib/statisticscomponent';
 
 export const getServerSideProps = async ( req ) => {
   const userId = req.query.uid;
@@ -34,36 +36,12 @@ export const getServerSideProps = async ( req ) => {
   }
 }
 
-function setBar(bar, value) {
-  let i = 0;
-  if (i == 0) {
-    i = 1;
-    let elem = document.getElementById(bar);
-    let width = 0;
-    let id = setInterval(frame, 10);
-    function frame() {
-      if (width >= value) {
-        clearInterval(id);
-        i = 0;
-      } else {
-        width++;
-        elem.style.width = width + "%";
-      }
-    }
-  }
-}
-
-function setBars(audioFeatures) {
-  Object.keys(audioFeatures).forEach((key) => {
-    setBar(`${key}Bar`,audioFeatures[key]*100)
-  });
-}
-
 //TODO audioFeature may not change when it would be changed to 0
 
 export default function History( { playlists } ) {
   const {data: session} = useSession();
   const [allItems, setAllItems] = useState([]);
+  const [showMe, setShowMe] = useState(false);
 
   const getStatistics = async (save_id) => {
     const res = await fetch(`/api/history?sid=${save_id}`);
@@ -76,6 +54,7 @@ export default function History( { playlists } ) {
       "energy": allItems.playlist.energy,
       "valence": allItems.playlist.valence,
     }
+    setShowMe(true);
     setBars(audioFeatures);
   };
 
@@ -102,49 +81,18 @@ export default function History( { playlists } ) {
               <summary>{item.name}</summary>
               <ul>
                 {item.instances.map((instance) => (
-                  <li key={instance.id} onClick={() => getStatistics(instance.id)}>{instance.createdAt}</li>
-               ))}
-             </ul>  
+                  <li key={instance.id} onClick={() =>  {setShowMe(false); trackPromise(getStatistics(instance.id))}}>{instance.createdAt}</li>
+              ))}
+            </ul>  
             </details>
           ))}
         </div>
-
-        <p>Acousticness</p>
-        <div className={styles.my_progress}>
-          <div id="acousticnessBar" className={styles.my_bar}></div>
-        </div>
-
-        <p>Danceability</p>
-        <div className={styles.my_progress}>
-          <div id="danceabilityBar" className={styles.my_bar}></div>
-        </div>
-
-        <p>Energy</p>
-        <div className={styles.my_progress}>
-          <div id="energyBar" className={styles.my_bar}></div>
-        </div>
-
-        <p>Valence</p>
-        <div className={styles.my_progress}>
-          <div id="valenceBar" className={styles.my_bar}></div>
-        </div>
-
-        <div className={styles.top_genres}>
-          {allItems?.topGenres?.map((item) => (
-            <div key={item.id} className={styles.genre}>
-              <p>{item.genreId.slice(1,item.genreId.length-1)}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.top_artists}>
-          {allItems.topArtists?.map((item) => (
-          <div key={item.id} className={styles.artist}>
-            <p>{item.name}</p>
-          </div>
-        ))}
-        </div>
         
+        <LoadingIndicator/>
+
+        <div style={{display: showMe?"block":"none"}}>
+          <StatisticsComponent topGenres={allItems?.topGenres} topArtists={allItems?.topArtists}/>
+        </div>
       </>
     );
   }

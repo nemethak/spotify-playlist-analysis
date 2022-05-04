@@ -3,20 +3,13 @@ import Link from 'next/link';
 import {useState, useEffect} from 'react';
 import { Swiper, SwiperSlide, useSwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
-import { trackPromise, usePromiseTracker } from "react-promise-tracker";
+import { trackPromise } from "react-promise-tracker";
+import { LoadingIndicator } from '../lib/loadingindicator';
+import { setBars, splitArray, millisToTime } from '../lib/utils';
 import styles from '../styles/Styles.module.css';
 import 'swiper/css';
 import "swiper/css/navigation";
-
-const LoadingIndicator = props => {
-  const { promiseInProgress } = usePromiseTracker();
-  return (
-    promiseInProgress && 
-    <div>
-      Loading....
-    </div>
-  );  
-}
+import { StatisticsComponent } from '../lib/statisticscomponent';
 
 export default function Home() {
   const {data: session} = useSession();
@@ -26,71 +19,7 @@ export default function Home() {
   const [audioFeatures, setAudioFeatures] = useState({});
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
   const [showMe, setShowMe] = useState(false);
-  useEffect(() => { setBars(); }, [audioFeatures]);
-
-  function splitArray(array, chunk_size) {
-    let index = 0;
-    let arrayLength = array.length;
-    let tempArray = [];
-    
-    for (index = 0; index < arrayLength; index += chunk_size) {
-        let chunk = array.slice(index, index+chunk_size);
-        tempArray.push(chunk);
-    }
-    return tempArray;
-  }
-
-  function millisToTime(millis) {
-    if (millis > 3600000) {
-      let hours = Math.floor(millis / 3600000);
-      let remainingMillis = millis % 3600000;
-      let minutes = Math.floor(remainingMillis / 60000);
-      let seconds = ((remainingMillis % 60000) / 1000).toFixed(0);
-      if (minutes == 60) {
-        hours++;
-        minutes = 0;
-      }
-      return (
-        seconds == 60 ?
-        hours + ":" + (minutes < 10 ? "0" : "") + (minutes+1) + ":00" :
-        hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds
-    );
-    }
-    let minutes = Math.floor(millis / 60000);
-    let seconds = ((millis % 60000) / 1000).toFixed(0);
-    return (
-      seconds == 60 ?
-      (minutes+1) + ":00" :
-      minutes + ":" + (seconds < 10 ? "0" : "") + seconds
-    );
-  }
-  
-
-  function setBar(bar, value) {
-    let i = 0;
-    if (i == 0) {
-      i = 1;
-      let elem = document.getElementById(bar);
-      let width = 1;
-      let id = setInterval(frame, 10);
-      function frame() {
-        if (width >= value) {
-          clearInterval(id);
-          i = 0;
-        } else {
-          width++;
-          elem.style.width = width + "%";
-        }
-      }
-    }
-  }
-
-  function setBars() {
-    const {duration, ...rest} = audioFeatures;
-    Object.keys(rest).forEach((key) => {
-      setBar(`${key}Bar`,audioFeatures[key]*100)
-    });
-  }
+  useEffect(() => { const {duration, ...rest} = audioFeatures; setBars(rest); }, [audioFeatures]);
 
   const getPlaylists = async () => {
     const res = await fetch('/api/playlists');
@@ -248,66 +177,7 @@ export default function Home() {
 
         <div style={{display: showMe?"block":"none"}}>
           <button onClick={() => savePlaylistStats()}>Save playlist statistics</button>
-
-          <div className={styles.bars}>
-            <div>
-              <p>Acousticness</p>
-              <span className={styles.tooltip}>?
-                <span className={styles.tooltiptext}>Acoustic music is music that solely or primarily uses instruments that produce sound through acoustic means, as opposed to electric or electronic means.</span>
-              </span>
-              <div className={styles.my_progress}>
-                <div id="acousticnessBar" className={styles.my_bar}></div>
-              </div>
-            </div>
-          
-            <div>
-              <p>Danceability</p>
-              <span className={styles.tooltip}>?
-                <span className={styles.tooltiptext}>Describes how suitable the playlist is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity.</span>
-              </span>
-              <div className={styles.my_progress}>
-                <div id="danceabilityBar" className={styles.my_bar}></div>
-              </div>
-            </div>
-            
-
-            <div>
-              <p>Energy</p>
-              <span className={styles.tooltip}>?
-                <span className={styles.tooltiptext}>Represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.</span>
-              </span>
-              <div className={styles.my_progress}>
-                <div id="energyBar" className={styles.my_bar}></div>
-              </div>
-            </div>
-            
-
-            <div>
-              <p>Valence</p>
-              <span className={styles.tooltip}>?
-                <span className={styles.tooltiptext}>Describes the musical positiveness conveyed. Music with high valence sounds more positive (e.g. happy, cheerful, euphoric), while music with low valence sounds more negative (e.g. sad, depressed, angry).</span>
-              </span>
-              <div className={styles.my_progress}>
-                <div id="valenceBar" className={styles.my_bar}></div>
-              </div>
-            </div>
-          </div>
-          
-          <div className={styles.top_genres}>
-            {topGenres.map((item) => (
-              <div key={item.id} className={styles.genre}>
-                <p>{item.id.slice(1,item.id.length-1)}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className={styles.top_artists}>
-            {topArtists.map((item) => (
-            <div key={item.id} className={styles.artist}>
-              <p>{item.name}</p>
-            </div>
-          ))}
-          </div>
+          <StatisticsComponent topGenres={topGenres} topArtists={topArtists}/>          
         </div>
       </>
     );
