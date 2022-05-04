@@ -24,7 +24,7 @@ div.swiper-button-next {
 .bouncing-loader {
   display: flex;
   justify-content: center;
-  margin-top: 5rem;
+  margin: 5rem 0;
 }
 
 .bouncing-loader > div {

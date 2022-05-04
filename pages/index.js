@@ -18,13 +18,15 @@ export default function Home() {
   const [topGenres, setTopGenres] = useState([]);
   const [audioFeatures, setAudioFeatures] = useState({});
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
-  const [showMe, setShowMe] = useState(false);
+  const [showStatistics, setShowStatstics] = useState(false);
+  const [showPlaylists, setShowPlaylists] = useState(false);
   useEffect(() => { const {duration, ...rest} = audioFeatures; setBars(rest); }, [audioFeatures]);
 
   const getPlaylists = async () => {
     const res = await fetch('/api/playlists');
     const {items} = await res.json();
     setPlayists(items);
+    setShowPlaylists(true);
   };
 
   const getPlaylistItems = async (playlist_id) => {
@@ -135,7 +137,7 @@ export default function Home() {
                         }
     }
     setTopArtists(sortedArtists);
-    setShowMe(true);
+    setShowStatstics(true);
     setAudioFeatures(audioFeatures);
   }
 
@@ -154,8 +156,9 @@ export default function Home() {
           </div>
         </div>
 
-        <button onClick={() => trackPromise(getPlaylists())}>Get all my playlists</button>
+        <button onClick={() => {setShowPlaylists(false); trackPromise(getPlaylists())}}>Get all my playlists</button>
         <Swiper
+          style={{display: showPlaylists?"block":"none"}}
           spaceBetween={50}
           slidesPerView={3}
           loop={true}
@@ -167,7 +170,7 @@ export default function Home() {
             <SwiperSlide key={item.id}>
               <div>
                 <p>{item.name}</p>
-                <img src={item.images[0]?.url} onClick={() => {setShowMe(false); trackPromise(getPlaylistStatistics(item.id))}} width="300" height="300"/>
+                <img src={item.images[0]?.url} onClick={() => {setShowStatstics(false); trackPromise(getPlaylistStatistics(item.id))}} width="300" height="300"/>
               </div>
             </SwiperSlide>
           ))}
@@ -175,8 +178,8 @@ export default function Home() {
                 
         <LoadingIndicator/>
 
-        <div style={{display: showMe?"block":"none"}}>
-          <button onClick={() => savePlaylistStats()}>Save playlist statistics</button>
+        <div style={{display: showStatistics?"block":"none"}}>
+          <button onClick={() => trackPromise(savePlaylistStats())}>Save playlist statistics</button>
           <StatisticsComponent topGenres={topGenres} topArtists={topArtists}/>          
         </div>
       </>
