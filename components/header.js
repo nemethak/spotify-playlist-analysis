@@ -1,4 +1,4 @@
-import styles from '../styles/Styles.module.css';
+import styles from '../styles/Header.module.css';
 import Link from 'next/link';
 import {signOut} from 'next-auth/react';
 
@@ -31,5 +31,4 @@ export const Header = props => {
       </div>
     </div>
   );
-  
 }
