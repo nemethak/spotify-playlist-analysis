@@ -7,7 +7,7 @@ const handler = async (req, res) => {
   } = await getSession({req});
   const {ids} = req.query;
   const items = await getAudioFeatures(accessToken, ids).then(response => response.json());
-  console.log(items);
+
   const audio_features = {
     "acousticness": 0,
     "danceability": 0,

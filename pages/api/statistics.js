@@ -2,6 +2,7 @@ import { getSession } from 'next-auth/react';
 import prisma from "../../lib/prisma"
 
 export default async function handle(req, res) {
+  try {
     const { selectedPlaylist, playlists, topGenres, topArtists, audioFeatures } = req.body;
     const session = await getSession({ req });
     const user = session?.user?.id;
@@ -9,7 +10,6 @@ export default async function handle(req, res) {
     let playlistData = playlists.find(playlist => {
       return playlist.id === selectedPlaylist
     });
-    console.log(topGenres);
 
     const playlist = await prisma.playlist.create({
       data: {
@@ -25,7 +25,6 @@ export default async function handle(req, res) {
         userId: user,
       },
     });
-    console.log(playlist)
 
     const collection = await prisma.$transaction(
       topGenres.map(cur =>
@@ -49,7 +48,6 @@ export default async function handle(req, res) {
         })
       )
     )
-    console.log(collection)
 
     const genreOccurences = await prisma.$transaction(
       topGenres.map(cur =>
@@ -62,7 +60,6 @@ export default async function handle(req, res) {
         })
       )
     )
-    console.log(genreOccurences)
 
     const artists = await prisma.$transaction(
       topArtists.map(cur =>
@@ -87,7 +84,6 @@ export default async function handle(req, res) {
         })
       )
     )
-    console.log(artists)
 
     const artistOccurences = await prisma.$transaction(
       topArtists.map(cur =>
@@ -100,7 +96,9 @@ export default async function handle(req, res) {
         })
       )
     )
-    console.log(artistOccurences)
 
-    res.json(playlist);
+    res.status(200).json(playlist);
+  } catch (err) {
+    res.status(500).json({ error: 'failed to save data',  message: 'Something went wrong while trying to save playlist data', });
   }
+}

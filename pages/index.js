@@ -1,15 +1,29 @@
-import {useSession, signIn, signOut} from 'next-auth/react';
-import Link from 'next/link';
+import {getSession, useSession} from 'next-auth/react';
 import {useState, useEffect} from 'react';
-import { Swiper, SwiperSlide, useSwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 import { trackPromise } from "react-promise-tracker";
-import { LoadingIndicator } from '../lib/loadingindicator';
+import { LoadingIndicator } from '../components/loadingindicator';
 import { setBars, splitArray, millisToTime } from '../lib/utils';
-import styles from '../styles/Styles.module.css';
 import 'swiper/css';
 import "swiper/css/navigation";
-import { StatisticsComponent } from '../lib/statisticscomponent';
+import { StatisticsComponent } from '../components/statisticscomponent';
+import { Header } from '../components/header';
+
+export const getServerSideProps = async ( req ) => {
+  const session = await getSession(req);
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: { session }
+  }
+}
 
 export default function Home() {
   const {data: session} = useSession();
@@ -54,7 +68,7 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-      })
+      }).then((res) => console.log(res));
     } catch (error) {
       console.error(error);
     }
@@ -91,7 +105,6 @@ export default function Home() {
         audioFeatures[key] += tempAudioFeatures[key];
       });
     }
-    console.log(audioFeatures);
     const {duration, ...rest} = audioFeatures;
     Object.keys(rest).forEach((key) => {
       audioFeatures[key] /= tracksOnPlaylist.length;
@@ -141,54 +154,36 @@ export default function Home() {
     setAudioFeatures(audioFeatures);
   }
 
-  if (session) {
-    return (
-      <>
-        <div className={styles.header}>
-          <div className={styles.dropdown}>
-            <img src={session?.token?.picture} className={styles.profile_image}/>
-            <div className={styles.dropdown_content}>
-              <Link href={`history/${session?.user?.id}`}>
-                <a>History</a>
-              </Link>
-              <a onClick={() => signOut()}>Sign out</a>
-            </div>
-          </div>
-        </div>
-
-        <button onClick={() => {setShowPlaylists(false); trackPromise(getPlaylists())}}>Get all my playlists</button>
-        <Swiper
-          style={{display: showPlaylists?"block":"none"}}
-          spaceBetween={50}
-          slidesPerView={3}
-          loop={true}
-          navigation={true}
-          modules={[Navigation]}
-          onSwiper={(swiper) => console.log(swiper)}
-        >
-          {playlists.map((item) => (
-            <SwiperSlide key={item.id}>
-              <div>
-                <p>{item.name}</p>
-                <img src={item.images[0]?.url} onClick={() => {setShowStatstics(false); trackPromise(getPlaylistStatistics(item.id))}} width="300" height="300"/>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-                
-        <LoadingIndicator/>
-
-        <div style={{display: showStatistics?"block":"none"}}>
-          <button onClick={() => trackPromise(savePlaylistStats())}>Save playlist statistics</button>
-          <StatisticsComponent topGenres={topGenres} topArtists={topArtists}/>          
-        </div>
-      </>
-    );
-  }
   return (
     <>
-      Not signed in <br />
-      <button onClick={() => signIn('spotify')}>Sign in</button>
+      <Header profileImage={session?.token?.picture} userId={session?.user?.id} currentPage="index" />
+      <button onClick={() => {setShowPlaylists(false); trackPromise(getPlaylists())}}>Get all my playlists</button>
+      <Swiper
+        style={{display: showPlaylists?"block":"none"}}
+        spaceBetween={50}
+        slidesPerView={3}
+        loop={true}
+        navigation={true}
+        modules={[Navigation]}
+        onSwiper={(swiper) => console.log(swiper)}
+      >
+        {playlists.map((item) => (
+          <SwiperSlide key={item.id}>
+            <div>
+              <p>{item.name}</p>
+              <img src={item.images[0]?.url} onClick={() => {setShowStatstics(false); trackPromise(getPlaylistStatistics(item.id))}} width="300" height="300"/>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+              
+      <LoadingIndicator/>
+
+      <div style={{display: showStatistics?"block":"none"}}>
+        <button onClick={() => trackPromise(savePlaylistStats())}>Save playlist statistics</button>
+        <StatisticsComponent topGenres={topGenres} topArtists={topArtists}/>          
+      </div>
+      <div id="popUp" style={{display: "none"}}> Popup Message </div>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import {useSession, signIn, signOut} from 'next-auth/react';
+import { getSession, useSession} from 'next-auth/react';
 import Link from 'next/link';
 import {useState} from 'react';
 import styles from '../../styles/Styles.module.css';
@@ -6,12 +6,32 @@ import 'swiper/css';
 import "swiper/css/navigation";
 import prisma from "../../lib/prisma";
 import { trackPromise } from "react-promise-tracker";
-import { LoadingIndicator } from '../../lib/loadingindicator';
+import { LoadingIndicator } from '../../components/loadingindicator';
 import { setBars } from '../../lib/utils';
-import { StatisticsComponent } from '../../lib/statisticscomponent';
+import { StatisticsComponent } from '../../components/statisticscomponent';
+import { Header } from '../../components/header';
 
 export const getServerSideProps = async ( req ) => {
+  const session = await getSession(req);
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
   const userId = req.query.uid;
+
+  if (userId != session?.user?.id) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
   const saves = await prisma.playlist.findMany({
     where: {
       userId: userId,
@@ -58,48 +78,27 @@ export default function History( { playlists } ) {
     setBars(audioFeatures);
   };
 
-  if (session) {
-    return (
-      <>
-        <div className={styles.header}>
-          <div className={styles.dropdown}>
-            <Link href="/">
-              <img src={session?.token?.picture} className={styles.profile_image}/>
-            </Link>
-            <div className={styles.dropdown_content}>
-              <Link href="/">
-                <a>Main Page</a>
-              </Link>
-              <a onClick={() => signOut()}>Sign out</a>
-            </div>
-          </div>
-        </div>
-        
-        <div className={styles.top_artists}>
-          {playlists.map((item) => (
-            <details key={item.id}>
-              <summary>{item.name}</summary>
-              <ul>
-                {item.instances.map((instance) => (
-                  <li key={instance.id} onClick={() =>  {setShowMe(false); trackPromise(getStatistics(instance.id))}}>{instance.createdAt}</li>
-              ))}
-            </ul>  
-            </details>
-          ))}
-        </div>
-        
-        <LoadingIndicator/>
-
-        <div style={{display: showMe?"block":"none"}}>
-          <StatisticsComponent topGenres={allItems?.topGenres} topArtists={allItems?.topArtists}/>
-        </div>
-      </>
-    );
-  }
   return (
     <>
-      Not signed in <br />
-      <button onClick={() => signIn('spotify')}>Sign in</button>
+      <Header profileImage={session?.token?.picture} userId={session?.user?.id} currentPage="history" />
+      <div className={styles.top_artists}>
+        {playlists.map((item) => (
+          <details key={item.id}>
+            <summary>{item.name}</summary>
+            <ul>
+              {item.instances.map((instance) => (
+                <li key={instance.id} onClick={() =>  {setShowMe(false); trackPromise(getStatistics(instance.id))}}>{instance.createdAt}</li>
+            ))}
+          </ul>  
+          </details>
+        ))}
+      </div>
+      
+      <LoadingIndicator/>
+
+      <div style={{display: showMe?"block":"none"}}>
+        <StatisticsComponent topGenres={allItems?.topGenres} topArtists={allItems?.topArtists}/>
+      </div>
     </>
   );
 }
