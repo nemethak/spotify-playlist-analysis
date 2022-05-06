@@ -36,7 +36,7 @@ export default function LogIn({ providers }) {
             <Image src={statistics} alt="Bar chart icon" />
           </div>
           <h2>Individual charts</h2>
-          <p>Pick a playlist, and view its most prevalent genres and artists. You can also get estimations of the playlist's acousticness, danceability, energy and valence.</p>
+          <p>{`Pick a playlist, and view its most prevalent genres and artists. You can also get estimations of the playlist's acousticness, danceability, energy and valence.`}</p>
         </div>
         <div className={styles.section}>
           <div>
