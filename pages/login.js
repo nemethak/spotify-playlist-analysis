@@ -4,6 +4,9 @@ import Image from 'next/image';
 import statistics from '../public/bar-chart.png';
 import history from '../public/history.png'
 
+export async function getServerSideProps() {
+  return { props: { providers: await getProviders() } };
+}
 
 export default function LogIn({ providers }) {
   return (
@@ -48,7 +51,4 @@ export default function LogIn({ providers }) {
       </div>
     </>
   );
-}
-export async function getServerSideProps(context) {
-  return { props: { providers: await getProviders() } };
 }

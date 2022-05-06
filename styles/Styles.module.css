@@ -36,19 +36,28 @@
   font-weight: bold;
 }
 
+.bars {
+  text-align: left;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 3rem;
+}
+
 .bars div p {
   display: inline-block;
 }
 
 .my_progress {
-  width: 95%;
+  width: 100%;
   background-color: #ddd;
+  border-radius: 0.4rem;
 }
 
 .my_bar {
   width: 0%;
   height: 30px;
   background-color: #04AA6D;
+  border-radius: 0.4rem;
 }
 
 .container {
@@ -173,7 +182,7 @@
   position: relative;
   display: inline;
   background-color: rgb(173, 177, 182);
-  padding: 0.05rem 0.3rem;
+  padding: 0.05rem 0.45rem;
   border-radius: 1rem;
   margin-left: 0.2rem;
   color: white;

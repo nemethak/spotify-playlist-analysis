@@ -7,6 +7,7 @@ import { LoadingIndicator } from '../components/loadingindicator';
 import { setBars, splitArray, millisToTime } from '../lib/utils';
 import 'swiper/css';
 import "swiper/css/navigation";
+import styles from '../styles/Index.module.css';
 import { StatisticsComponent } from '../components/statisticscomponent';
 import { Header } from '../components/header';
 
@@ -169,9 +170,11 @@ export default function Home() {
       >
         {playlists.map((item) => (
           <SwiperSlide key={item.id}>
-            <div>
-              <p>{item.name}</p>
-              <img src={item.images[0]?.url} onClick={() => {setShowStatstics(false); trackPromise(getPlaylistStatistics(item.id))}} width="300" height="300"/>
+            <div className={styles.slide}>
+              <div>
+                <img src={item.images[0]?.url} onClick={() => {setShowStatstics(false); trackPromise(getPlaylistStatistics(item.id))}} width="300" height="300"/>
+                <p>{item.name}</p>
+              </div>
             </div>
           </SwiperSlide>
         ))}
@@ -180,8 +183,8 @@ export default function Home() {
       <LoadingIndicator/>
 
       <div style={{display: showStatistics?"block":"none"}}>
-        <button onClick={() => trackPromise(savePlaylistStats())}>Save playlist statistics</button>
         <StatisticsComponent topGenres={topGenres} topArtists={topArtists}/>          
+        <button onClick={() => trackPromise(savePlaylistStats())}>Save playlist statistics</button>
       </div>
       <div id="popUp" style={{display: "none"}}> Popup Message </div>
     </>

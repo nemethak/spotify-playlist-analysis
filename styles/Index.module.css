@@ -1,0 +1,22 @@
+.slide {
+  text-align: center;
+  border-color: #e2e2e2;
+  border-width: 1px;
+  border-style: solid;
+  width: 300px;
+  margin: 2rem auto;
+  padding: 1rem 1rem 1.5rem;
+  background-color: #fbfbfb;
+}
+
+.slide:hover {
+  box-shadow: 0.5rem 0.5rem 1rem #d8d8d8; 
+  cursor: pointer;
+}
+
+.slide p {
+  color: black;
+  margin: 0;
+  padding: 2rem 0 0;
+  font-weight: bold;
+}

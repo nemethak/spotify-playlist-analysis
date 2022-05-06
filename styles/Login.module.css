@@ -23,6 +23,7 @@
 
 .page button:hover {
   background-color: #15863d;
+  cursor: pointer;
 }
 
 .section {
