@@ -29,3 +29,17 @@
   padding: 2rem 0 0;
   font-weight: bold;
 }
+
+.popup {
+  background-color: #fbfbfb;
+  opacity: 0.9;
+  box-shadow: 0 0 2.5rem #ddd;
+  border-radius: 1rem;
+  z-index: 3;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  color: #424242;
+  padding: 2rem 1rem;
+  font-size: 2rem;
+}

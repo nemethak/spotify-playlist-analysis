@@ -35,6 +35,7 @@ export default function Home() {
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
   const [showStatistics, setShowStatstics] = useState(false);
   const [showPlaylists, setShowPlaylists] = useState(false);
+  const [showPopUp, setShowPopUp] = useState(false);  
   useEffect(() => { const {duration, ...rest} = audioFeatures; setBars(rest); }, [audioFeatures]);
 
   const getPlaylists = async () => {
@@ -69,7 +70,17 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-      }).then((res) => console.log(res));
+      }).then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          document.getElementById("popUp").textContent = "Succesfully saved playlist statistics.";
+        } else {
+          document.getElementById("popUp").textContent = "Could not save playlist statistics, an error occured.";
+        }
+        setShowPopUp(true)
+        setTimeout(() => setShowPopUp(false), 3000);
+      });
+
     } catch (error) {
       console.error(error);
     }
@@ -187,8 +198,8 @@ export default function Home() {
       <div style={{display: showStatistics?"block":"none"}}>
         <StatisticsComponent topGenres={topGenres} topArtists={topArtists}/>          
         <button onClick={() => trackPromise(savePlaylistStats())}>Save playlist statistics</button>
+        <div id="popUp" className={styles.popup} style={{display: showPopUp?"block":"none"}}> Popup Message </div>
       </div>
-      <div id="popUp" style={{display: "none"}}> Popup Message </div>
     </>
   );
 }
