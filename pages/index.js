@@ -166,18 +166,20 @@ export default function Home() {
         loop={true}
         navigation={true}
         modules={[Navigation]}
-        onSwiper={(swiper) => console.log(swiper)}
+        className={styles.swiper}
       >
-        {playlists.map((item) => (
-          <SwiperSlide key={item.id}>
-            <div className={styles.slide}>
-              <div>
-                <img src={item.images[0]?.url} onClick={() => {setShowStatstics(false); trackPromise(getPlaylistStatistics(item.id))}} width="300" height="300"/>
-                <p>{item.name}</p>
+        <div>
+          {playlists.map((item) => (
+            <SwiperSlide key={item.id}>
+              <div className={styles.slide}>
+                <div>
+                  <img src={item.images[0]?.url} onClick={() => {setShowStatstics(false); trackPromise(getPlaylistStatistics(item.id))}} width="300" height="300"/>
+                  <p>{item.name}</p>
+                </div>
               </div>
-            </div>
-          </SwiperSlide>
-        ))}
+            </SwiperSlide>
+          ))}
+        </div>
       </Swiper>
               
       <LoadingIndicator/>

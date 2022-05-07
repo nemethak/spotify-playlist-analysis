@@ -1,6 +1,15 @@
 .header {
   background-color: #afd4c7;
-  padding: 50px;
+  height: 10rem;
+}
+
+.header h1 {
+  color: white;
+  text-align: left;
+  font-size: 2.4rem;
+  margin: 0;
+  padding-top: 3.4rem;
+  padding-left: 2rem;
 }
 
 .profile_image {

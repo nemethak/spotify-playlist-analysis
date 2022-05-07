@@ -20,6 +20,7 @@ export const Header = props => {
   
   return (
     <div className={styles.header}>
+      <h1>Playlist Stats for Spotify</h1>
       <div className={styles.dropdown}>
         <img src={props.profileImage} className={styles.profile_image}/>
         <div className={styles.dropdown_content}>

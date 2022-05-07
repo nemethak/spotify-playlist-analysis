@@ -1,8 +1,11 @@
+.swiper {
+  width: 95%;
+}
+
 .slide {
   text-align: center;
-  border-color: #e2e2e2;
-  border-width: 1px;
-  border-style: solid;
+  box-shadow: 0 0 2.5rem #ddd;
+  border-radius: 1rem;
   width: 300px;
   margin: 2rem auto;
   padding: 1rem 1rem 1.5rem;
@@ -10,8 +13,14 @@
 }
 
 .slide:hover {
-  box-shadow: 0.5rem 0.5rem 1rem #d8d8d8; 
+  transform: scale(1.02);
+  transition-duration: 0.3s;
+  animation-duration: 10s;
   cursor: pointer;
+}
+
+.slide img {
+  border-radius: 0.5rem;
 }
 
 .slide p {
