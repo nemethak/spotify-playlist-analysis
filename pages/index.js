@@ -77,7 +77,7 @@ export default function Home() {
         } else {
           document.getElementById("popUp").textContent = "Could not save playlist statistics, an error occured.";
         }
-        setShowPopUp(true)
+        setShowPopUp(true);
         setTimeout(() => setShowPopUp(false), 3000);
       });
 
