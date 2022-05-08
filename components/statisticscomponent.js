@@ -44,6 +44,10 @@ export const StatisticsComponent = props => {
             <div id="valenceBar" className={styles.my_bar}></div>
           </div>
         </div>
+
+        <div className={styles.bar}>
+          <p>Lentgh of playlist: {props.duration}</p>
+        </div>
       </div>
 
       <div className={styles.row}>

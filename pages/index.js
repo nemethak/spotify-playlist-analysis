@@ -121,7 +121,6 @@ export default function Home() {
     Object.keys(rest).forEach((key) => {
       audioFeatures[key] /= tracksOnPlaylist.length;
     });
-    console.log(millisToTime(audioFeatures.duration));
     
     let allArtistsIds = splitArray(Object.keys(artistsOnPlaylist), 50);
     const artists = [];
@@ -196,7 +195,7 @@ export default function Home() {
       <LoadingIndicator/>
 
       <div style={{display: showStatistics?"block":"none"}}>
-        <StatisticsComponent topGenres={topGenres} topArtists={topArtists}/>          
+        <StatisticsComponent topGenres={topGenres} topArtists={topArtists} duration={millisToTime(audioFeatures.duration)}/>          
         <button onClick={() => trackPromise(savePlaylistStats())}>Save playlist statistics</button>
         <div id="popUp" className={styles.popup} style={{display: showPopUp?"block":"none"}}> Popup Message </div>
       </div>

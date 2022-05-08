@@ -7,7 +7,7 @@ import "swiper/css/navigation";
 import prisma from "../../lib/prisma";
 import { trackPromise } from "react-promise-tracker";
 import { LoadingIndicator } from '../../components/loadingindicator';
-import { setBars } from '../../lib/utils';
+import { millisToTime, setBars } from '../../lib/utils';
 import { StatisticsComponent } from '../../components/statisticscomponent';
 import { Header } from '../../components/header';
 
@@ -66,7 +66,6 @@ export default function History( { playlists } ) {
   const getStatistics = async (save_id) => {
     const res = await fetch(`/api/history?sid=${save_id}`);
     const {allItems} = await res.json();
-    console.log(allItems)
     setAllItems(allItems);
     const audioFeatures = {
       "acousticness": allItems.playlist.acousticness,
@@ -99,7 +98,7 @@ export default function History( { playlists } ) {
       <LoadingIndicator/>
 
       <div style={{display: showMe?"block":"none"}}>
-        <StatisticsComponent topGenres={allItems?.topGenres} topArtists={allItems?.topArtists}/>
+        <StatisticsComponent topGenres={allItems?.topGenres} topArtists={allItems?.topArtists} duration={millisToTime(allItems?.playlist?.duration)} />
       </div>
     </>
   );
