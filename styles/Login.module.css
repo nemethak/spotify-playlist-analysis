@@ -8,24 +8,6 @@
   font-size: 2rem;
 }
 
-.page button {
-  background-color: #1DB954;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  padding: 1.5rem 3.2rem;
-  text-align: center;
-  font-weight: bold;
-  font-size: 2rem;
-  transition-duration: 0.4s;
-  margin: 3rem 0 8rem 0;
-}
-
-.page button:hover {
-  background-color: #15863d;
-  cursor: pointer;
-}
-
 .section {
   padding: 0 25%;
   margin-top: 5rem;

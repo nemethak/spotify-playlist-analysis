@@ -1,4 +1,4 @@
-import styles from '../styles/Styles.module.css';
+import styles from '../styles/Statistics.module.css';
 
 export const StatisticsComponent = props => {
   return (

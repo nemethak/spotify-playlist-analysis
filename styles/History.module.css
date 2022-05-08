@@ -1,0 +1,40 @@
+.playlist details {
+  text-align: center;
+  box-shadow: 0 0 0.5rem #ddd;
+  border-radius: 1rem;
+  width: 25rem;
+  padding: 1rem 1rem;
+  background-color: #fbfbfb;
+}
+
+.playlist details > summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.playlist details > summary::-webkit-details-marker {
+  display:none;
+}
+
+.playlist details ul {
+  text-align: left;
+  list-style: none;
+}
+
+.playlist li {
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.card {
+  display: flex;
+  margin: 3rem auto;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.card .playlist {
+  margin: 0.5rem;
+}

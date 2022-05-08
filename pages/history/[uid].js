@@ -1,7 +1,7 @@
 import { getSession, useSession} from 'next-auth/react';
 import Link from 'next/link';
 import {useState} from 'react';
-import styles from '../../styles/Styles.module.css';
+import styles from '../../styles/History.module.css';
 import 'swiper/css';
 import "swiper/css/navigation";
 import prisma from "../../lib/prisma";
@@ -81,16 +81,18 @@ export default function History( { playlists } ) {
   return (
     <>
       <Header profileImage={session?.token?.picture} userId={session?.user?.id} currentPage="history" />
-      <div className={styles.top_artists}>
+      <div className={styles.card}>
         {playlists.map((item) => (
-          <details key={item.id}>
-            <summary>{item.name}</summary>
-            <ul>
-              {item.instances.map((instance) => (
-                <li key={instance.id} onClick={() =>  {setShowMe(false); trackPromise(getStatistics(instance.id))}}>{instance.createdAt}</li>
-            ))}
-          </ul>  
-          </details>
+          <div key={item.id} className={styles.playlist}>
+            <details>
+              <summary>{item.name}</summary>
+              <ul>
+                {item.instances.map((instance) => (
+                  <li key={instance.id} onClick={() =>  {setShowMe(false); trackPromise(getStatistics(instance.id))}}>{instance.createdAt}</li>
+                ))}
+              </ul>  
+            </details>
+          </div>
         ))}
       </div>
       
