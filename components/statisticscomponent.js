@@ -46,7 +46,7 @@ export const StatisticsComponent = props => {
         </div>
 
         <div className={styles.bar}>
-          <p>Lentgh of playlist: {props.duration}</p>
+          <p>Length of playlist: {props.duration}</p>
         </div>
       </div>
 
