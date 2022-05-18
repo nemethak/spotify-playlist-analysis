@@ -1,0 +1,10 @@
+/* General styles for 404 page */
+.page {
+  color: white;
+  text-align: center;
+  margin-top: 30%;
+}
+
+.page p {
+  font-size: 2rem;
+}
