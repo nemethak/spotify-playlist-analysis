@@ -32,6 +32,7 @@ export default function Home() {
   const [topArtists, setTopArtists] = useState([]);
   const [topGenres, setTopGenres] = useState([]);
   const [audioFeatures, setAudioFeatures] = useState({});
+  const [duration, setDuration] = useState("");
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
   const [showStatistics, setShowStatstics] = useState(false);
   const [showPlaylists, setShowPlaylists] = useState(false);
@@ -71,7 +72,6 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       }).then((res) => {
-        console.log(res);
         if (res.status === 200) {
           document.getElementById("popUp").textContent = "Succesfully saved playlist statistics.";
         } else {
@@ -121,6 +121,13 @@ export default function Home() {
     Object.keys(rest).forEach((key) => {
       audioFeatures[key] /= tracksOnPlaylist.length;
     });
+
+    try {
+      setDuration(millisToTime(audioFeatures.duration));
+    }
+    catch (error) {
+      console.log(error);
+    }
     
     let allArtistsIds = sliceArray(Object.keys(artistsOnPlaylist), 50);
     const artists = [];
@@ -195,7 +202,7 @@ export default function Home() {
       <LoadingIndicator/>
 
       <div style={{display: showStatistics?"block":"none"}}>
-        <StatisticsComponent topGenres={topGenres} topArtists={topArtists} duration={millisToTime(audioFeatures.duration)}/>          
+        <StatisticsComponent topGenres={topGenres} topArtists={topArtists} duration={duration}/>          
         <button onClick={() => trackPromise(savePlaylistStats())}>Save playlist statistics</button>
         <div id="popUp" className={styles.popup} style={{display: showPopUp?"block":"none"}}> Popup Message </div>
       </div>

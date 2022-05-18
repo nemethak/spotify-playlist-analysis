@@ -3,7 +3,7 @@ import styles from '../styles/Statistics.module.css';
 export const StatisticsComponent = props => {
   return (
     <>
-      <div className={styles.card}>
+      <div className={styles.card} data-testid="audio-features-card">
         <h2>Audio Features</h2>
         <div className={styles.bar}>
           <p>Acousticness</p>
@@ -46,25 +46,25 @@ export const StatisticsComponent = props => {
         </div>
 
         <div className={styles.bar}>
-          <p>Length of playlist: {props.duration}</p>
+          <p data-testid="duration">Length of playlist: {props.duration}</p>
         </div>
       </div>
 
-      <div className={styles.row}>
-        <div className={styles.card}>
+      <div className={styles.row} data-testid="row">
+        <div className={styles.card} data-testid="top-genres-card">
           <h2>Top Genres</h2>
           {props.topGenres?.map((item) => (
             <div key={item.id} className={styles.carditem}>
-              <p>{item.id.slice(1,item.id.length-1)}</p>
+              <p data-testid={item.id}>{item.id.slice(1,item.id.length-1)}</p>
             </div>
           ))}
         </div>
 
-        <div className={styles.card}>
+        <div className={styles.card} data-testid="top-artists-card">
           <h2>Top Artists</h2>
           {props.topArtists?.map((item) => (
           <div key={item.id} className={styles.carditem}>
-            <p>{item.name}</p>
+            <p data-testid={item.id}>{item.name}</p>
           </div>
         ))}
         </div>

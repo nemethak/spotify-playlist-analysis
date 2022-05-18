@@ -7,27 +7,27 @@ export const Header = props => {
   if (props.currentPage === "index") {
     menuItems.push(
       <Link key="history" href={`/history/${props.userId}`}>
-        <a>History</a>
+        <a data-testid="history">History</a>
       </Link>
     );
   } else {
     menuItems.push(
       <Link key="index" href="/">
-        <a>Main Page</a>
+        <a data-testid="index">Main Page</a>
       </Link>
     )
   };
   
   return (
     <div className={styles.header}>
-      <h1>Playlist Stats for Spotify</h1>
-      <div className={styles.dropdown}>
-        <img src={props.profileImage} className={styles.profile_image}/>
+      <h1 data-testid="title">Playlist Stats for Spotify</h1>
+      <div className={styles.dropdown} data-testid="dropdown">
+        <img src={props.profileImage} className={styles.profile_image} data-testid="profile-image" />
         <div className={styles.dropdown_content}>
           {menuItems?.map((item) => (
             item
           ))}
-          <a onClick={() => signOut()}>Sign out</a>
+          <a onClick={() => signOut()} data-testid="sign-out">Sign out</a>
         </div>
       </div>
     </div>

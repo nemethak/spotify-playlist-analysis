@@ -50,18 +50,17 @@ export const getServerSideProps = async ( req ) => {
       "instances": instances
     });
   }
-
+  
   return {
     props : { playlists }
   }
 }
 
-//TODO audioFeature may not change when it would be changed to 0
-
 export default function History( { playlists } ) {
   const {data: session} = useSession();
   const [allItems, setAllItems] = useState([]);
   const [showMe, setShowMe] = useState(false);
+  const [duration, setDuration] = useState("");
 
   const getStatistics = async (save_id) => {
     const res = await fetch(`/api/history?sid=${save_id}`);
@@ -73,6 +72,7 @@ export default function History( { playlists } ) {
       "energy": allItems.playlist.energy,
       "valence": allItems.playlist.valence,
     }
+    setDuration(millisToTime(allItems?.playlist?.duration));
     setShowMe(true);
     setBars(audioFeatures);
   };
@@ -101,7 +101,7 @@ export default function History( { playlists } ) {
       <LoadingIndicator/>
 
       <div style={{display: showMe?"block":"none"}}>
-        <StatisticsComponent topGenres={allItems?.topGenres} topArtists={allItems?.topArtists} duration={millisToTime(allItems?.playlist?.duration)} />
+        <StatisticsComponent topGenres={allItems?.topGenres} topArtists={allItems?.topArtists} duration={duration} />
       </div>
     </>
   );
