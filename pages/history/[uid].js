@@ -1,5 +1,5 @@
 import { getSession, useSession} from 'next-auth/react';
-import Link from 'next/link';
+import Head from 'next/head';
 import {useState} from 'react';
 import styles from '../../styles/History.module.css';
 import 'swiper/css';
@@ -79,8 +79,11 @@ export default function History( { playlists } ) {
 
   return (
     <>
+      <Head>
+        <title>History - Playlist Stats for Spotify</title>
+      </Head>
       <Header profileImage={session?.token?.picture} userId={session?.user?.id} currentPage="history" />
-      <div className={styles.card}>
+      <div className={styles.menu}>
         {playlists.map((item) => (
           <div key={item.id} className={styles.playlist}>
             <details>

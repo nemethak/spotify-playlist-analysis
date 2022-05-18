@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 import { trackPromise } from "react-promise-tracker";
 import { LoadingIndicator } from '../components/loadingindicator';
-import { setBars, splitArray, millisToTime } from '../lib/utils';
+import { setBars, sliceArray, millisToTime } from '../lib/utils';
 import 'swiper/css';
 import "swiper/css/navigation";
 import styles from '../styles/Index.module.css';
@@ -101,7 +101,7 @@ export default function Home() {
       }
     }
 
-    let allTrackIds = splitArray(tracksOnPlaylist, 100);
+    let allTrackIds = sliceArray(tracksOnPlaylist, 100);
     const audioFeatures = {
       "acousticness": 0,
       "danceability": 0,
@@ -122,7 +122,7 @@ export default function Home() {
       audioFeatures[key] /= tracksOnPlaylist.length;
     });
     
-    let allArtistsIds = splitArray(Object.keys(artistsOnPlaylist), 50);
+    let allArtistsIds = sliceArray(Object.keys(artistsOnPlaylist), 50);
     const artists = [];
     for (const artistsIds of allArtistsIds) {
       let artistIdsQuery = Object.values(artistsIds).join();

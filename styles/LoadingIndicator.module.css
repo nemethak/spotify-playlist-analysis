@@ -1,3 +1,4 @@
+/* Styles for the loading indicator used while async operations are taking place */
 .bouncing_loader {
   display: flex;
   justify-content: center;
@@ -11,6 +12,7 @@
   position:   fixed; 
 }
 
+/* Bouncing loader dots */
 .bouncing_loader > div {
   width: 16px;
   height: 16px;
@@ -21,6 +23,7 @@
   animation: bouncing_loader 0.6s infinite alternate;
 }
 
+/* Animation */
 @keyframes bouncing_loader {
   to {
     opacity: 0.1;
@@ -28,6 +31,7 @@
   }
 }
 
+/* Delays for the second and third dot */
 .bouncing_loader > div:nth-child(2) {
   animation-delay: 0.2s;
 }

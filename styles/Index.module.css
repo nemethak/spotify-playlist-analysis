@@ -1,3 +1,4 @@
+/* Swiper gallery */
 .swiper {
   width: 95%;
 }
@@ -29,6 +30,7 @@
   font-weight: bold;
 }
 
+/* Save indicator popup */
 .popup {
   background-color: #fbfbfb;
   opacity: 0.9;

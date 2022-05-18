@@ -3,6 +3,7 @@ import styles from '../styles/Login.module.css';
 import Image from 'next/image';
 import statistics from '../public/bar-chart.png';
 import history from '../public/history.png'
+import Head from "next/head";
 
 export async function getServerSideProps() {
   return { props: { providers: await getProviders() } };
@@ -11,17 +12,20 @@ export async function getServerSideProps() {
 export default function LogIn({ providers }) {
   return (
     <>
-    <style jsx global>
-      {`
-        html, body {
-          background: url('/login-cover.png') no-repeat center center fixed; 
-          -webkit-background-size: cover;
-          -moz-background-size: cover;
-          -o-background-size: cover;
-          background-size: cover;
-        }
-      `}
-    </style>
+      <Head>
+        <title>Login - Playlist Stats for Spotify</title>
+      </Head>
+      <style jsx global>
+        {`
+          html, body {
+            background: url('/login-cover.png') no-repeat center center fixed; 
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+          }
+        `}
+      </style>
       <div className={styles.page}>
         <h1>Playlist Stats for Spotify</h1>
         <p>Please log in with your spotify account to see your playlist statistics!</p>

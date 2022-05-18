@@ -1,3 +1,4 @@
+/* Cards */
 .card {
   border-radius: 8rem;
   width: 90%;
@@ -27,6 +28,7 @@
   font-weight: bold;
 }
 
+/* Card grid*/
 .row {
   display: flex;
   width: 95%;
@@ -46,6 +48,7 @@
   }
 }
 
+/* Progress bar segment */
 .bar {
   text-align: left;
   margin-left: 5%;
@@ -53,17 +56,20 @@
   margin-bottom: 1rem;
 }
 
+/* Progress bar label */
 .bar p {
   display: inline-block;
   font-weight: bold;
 }
 
+/* Progress bar background */
 .my_progress {
   width: 100%;
   background-color: #ddd;
   border-radius: 0.4rem;
 }
 
+/* Progress bar fill */
 .my_bar {
   width: 0%;
   height: 30px;
@@ -93,7 +99,7 @@
   padding: 5px 3px;
   border-radius: 6px;
 
-  /* Position the tooltip text */
+  /* Position of the tooltip text */
   position: absolute;
   z-index: 1;
   bottom: 125%;
@@ -117,7 +123,7 @@
   border-color: #555 transparent transparent transparent;
 }
 
-/* Show the tooltip text when you mouse over the tooltip container */
+/* Show tooltip text when hovering over the tooltip container */
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
