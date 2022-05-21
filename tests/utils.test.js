@@ -13,7 +13,7 @@ describe('sliceArray', () => {
 });
 
 describe('millisToTime', () => {
-  it("converts miliseconds to human-readable time", () => {
+  it("converts milliseconds to human-readable time", () => {
     expect(millisToTime(0)).toBe("0:00");
     expect(millisToTime(30000)).toBe("0:30");
     expect(millisToTime(60000)).toBe("1:00");
@@ -24,6 +24,8 @@ describe('millisToTime', () => {
   });
 
   it('throws on bad parameters', () => {
+    expect(() => millisToTime(1.5)).toThrow();
+    expect(() => millisToTime(1.5)).toThrowError(/^Bad parameter!$/);
     expect(() => millisToTime(-1)).toThrow();
     expect(() => millisToTime(-1)).toThrowError(/^Bad parameter!$/);
     expect(() => millisToTime("one")).toThrow();
