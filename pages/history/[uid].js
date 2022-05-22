@@ -77,32 +77,46 @@ export default function History( { playlists } ) {
     setBars(audioFeatures);
   };
 
-  return (
-    <>
-      <Head>
-        <title>History - Playlist Stats for Spotify</title>
-      </Head>
-      <Header profileImage={session?.token?.picture} userId={session?.user?.id} currentPage="history" />
-      <div className={styles.menu}>
-        {playlists.map((item) => (
-          <div key={item.id} className={styles.playlist}>
-            <details>
-              <summary>{item.name}</summary>
-              <ul>
-                {item.instances.map((instance) => (
-                  <li key={instance.id} onClick={() =>  {setShowMe(false); trackPromise(getStatistics(instance.id))}}>{instance.createdAt}</li>
-                ))}
-              </ul>  
-            </details>
-          </div>
-        ))}
-      </div>
-      
-      <LoadingIndicator/>
-
-      <div style={{display: showMe?"block":"none"}}>
-        <StatisticsComponent topGenres={allItems?.topGenres} topArtists={allItems?.topArtists} duration={duration} />
-      </div>
-    </>
-  );
+  if (playlists.length != 0) {
+    return (
+      <>
+        <Head>
+          <title>History - Playlist Stats for Spotify</title>
+        </Head>
+        <Header profileImage={session?.token?.picture} userId={session?.user?.id} currentPage="history" />
+        <div className={styles.menu}>
+          {playlists.map((item) => (
+            <div key={item.id} className={styles.playlist}>
+              <details>
+                <summary>{item.name}</summary>
+                <ul>
+                  {item.instances.map((instance) => (
+                    <li key={instance.id} onClick={() =>  {setShowMe(false); trackPromise(getStatistics(instance.id))}}>{instance.createdAt}</li>
+                  ))}
+                </ul>  
+              </details>
+            </div>
+          ))}
+        </div>
+        
+        <LoadingIndicator/>
+  
+        <div style={{display: showMe?"block":"none"}}>
+          <StatisticsComponent topGenres={allItems?.topGenres} topArtists={allItems?.topArtists} duration={duration} />
+        </div>
+      </>
+    );
+  }
+  else {
+    return (
+      <>
+        <Head>
+          <title>History - Playlist Stats for Spotify</title>
+        </Head>
+        <Header profileImage={session?.token?.picture} userId={session?.user?.id} currentPage="history" />
+        <h3>{`You don't have any statistics yet.`}</h3>
+        <p>Data saved on the main page will show up here.</p>
+      </>
+    );
+  }
 }
