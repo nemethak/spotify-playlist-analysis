@@ -112,7 +112,6 @@ export default function Home() {
     for (const trackIds of allTrackIds) {
       let trackIdsQuery = trackIds.join();
       const tempAudioFeatures = await getAudioFeatures(trackIdsQuery);
-      //TODO: what if there are null values among the audio features
       Object.keys(tempAudioFeatures).forEach((key) => {
         audioFeatures[key] += tempAudioFeatures[key];
       });
